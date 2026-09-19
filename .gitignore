@@ -1,0 +1,9 @@
+node_modules/
+dist/
+target/
+coverage/
+.angular/
+cypress/videos/
+cypress/screenshots/
+.idea/
+*.iml
