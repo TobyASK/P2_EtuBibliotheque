@@ -1,0 +1,63 @@
+<div class="card m-3">
+  <h5 class="card-header" data-cy="form-title">{{ isEdit ? "Modifier l'étudiant" : 'Ajouter un étudiant' }}</h5>
+  <div class="card-body">
+    @if (errorMessage) {
+      <div class="alert alert-danger" data-cy="form-error">{{ errorMessage }}</div>
+    }
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group col-6">
+          <label for="firstName">Prénom</label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            class="form-control"
+            data-cy="firstName-input"
+            [ngClass]="{ 'is-invalid': submitted && form['firstName'].errors }"
+          />
+          @if (submitted && form['firstName'].errors?.['required']) {
+            <div class="invalid-feedback">Le prénom est obligatoire</div>
+          }
+        </div>
+        <div class="form-group col-6">
+          <label for="lastName">Nom</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            class="form-control"
+            data-cy="lastName-input"
+            [ngClass]="{ 'is-invalid': submitted && form['lastName'].errors }"
+          />
+          @if (submitted && form['lastName'].errors?.['required']) {
+            <div class="invalid-feedback">Le nom est obligatoire</div>
+          }
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-control"
+          data-cy="email-input"
+          [ngClass]="{ 'is-invalid': submitted && form['email'].errors }"
+        />
+        @if (submitted && form['email'].errors?.['required']) {
+          <div class="invalid-feedback">L'email est obligatoire</div>
+        }
+        @if (submitted && form['email'].errors?.['email']) {
+          <div class="invalid-feedback">L'email n'est pas valide</div>
+        }
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary mr-1" type="submit" [disabled]="loading" data-cy="form-submit">
+          {{ loading ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+        <a class="btn btn-secondary" routerLink="/students">Annuler</a>
+      </div>
+    </form>
+  </div>
+</div>

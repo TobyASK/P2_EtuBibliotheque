@@ -1,0 +1,44 @@
+<div class="card m-3">
+  <h5 class="card-header">Connexion</h5>
+  <div class="card-body">
+    @if (errorMessage) {
+      <div class="alert alert-danger" data-cy="login-error">{{ errorMessage }}</div>
+    }
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="login">Login</label>
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          class="form-control"
+          data-cy="login-input"
+          [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
+        />
+        @if (submitted && form['login'].errors?.['required']) {
+          <div class="invalid-feedback">Le login est obligatoire</div>
+        }
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="form-control"
+          data-cy="password-input"
+          [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
+        />
+        @if (submitted && form['password'].errors?.['required']) {
+          <div class="invalid-feedback">Le mot de passe est obligatoire</div>
+        }
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary mr-1" type="submit" [disabled]="loading" data-cy="login-submit">
+          {{ loading ? 'Connexion…' : 'Se connecter' }}
+        </button>
+        <a class="btn btn-link" routerLink="/register">Créer un compte</a>
+      </div>
+    </form>
+  </div>
+</div>

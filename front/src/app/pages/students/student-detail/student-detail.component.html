@@ -1,0 +1,24 @@
+<div class="card m-3">
+  <h5 class="card-header">Détail de l'étudiant</h5>
+  <div class="card-body">
+    @if (errorMessage) {
+      <div class="alert alert-danger" data-cy="detail-error">{{ errorMessage }}</div>
+    }
+    @if (loading) {
+      <p data-cy="detail-loading">Chargement…</p>
+    }
+    @if (student) {
+      <dl class="row" data-cy="student-detail">
+        <dt class="col-sm-3">Nom</dt>
+        <dd class="col-sm-9" data-cy="detail-lastName">{{ student.lastName }}</dd>
+        <dt class="col-sm-3">Prénom</dt>
+        <dd class="col-sm-9" data-cy="detail-firstName">{{ student.firstName }}</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9" data-cy="detail-email">{{ student.email }}</dd>
+      </dl>
+      <a class="btn btn-primary mr-1" [routerLink]="['/students', student.id, 'edit']" data-cy="detail-edit">Modifier</a>
+      <button class="btn btn-danger mr-1" type="button" (click)="deleteStudent()" data-cy="detail-delete">Supprimer</button>
+    }
+    <a class="btn btn-secondary" routerLink="/students">Retour à la liste</a>
+  </div>
+</div>

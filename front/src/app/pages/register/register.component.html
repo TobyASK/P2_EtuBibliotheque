@@ -1,6 +1,9 @@
 <div class="card m-3">
   <h5 class="card-header">Registration Form</h5>
   <div class="card-body">
+    @if (errorMessage) {
+      <div class="alert alert-danger" data-cy="register-error">{{ errorMessage }}</div>
+    }
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-row">
         <div class="form-group col-5">
@@ -8,6 +11,7 @@
           <input
             type="text"
             formControlName="firstName"
+            data-cy="register-firstName"
             class="form-control"
             [ngClass]="{ 'is-invalid': submitted && form['firstName'].errors }"
           />
@@ -24,6 +28,7 @@
           <input
             type="text"
             formControlName="lastName"
+            data-cy="register-lastName"
             class="form-control"
             [ngClass]="{ 'is-invalid': submitted && form['lastName'].errors }"
           />
@@ -41,6 +46,7 @@
         <input
           type="text"
           formControlName="login"
+            data-cy="register-login"
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
         />
@@ -56,8 +62,9 @@
       <div class="form-group">
         <label>Password</label>
         <input
-          type="text"
+          type="password"
           formControlName="password"
+            data-cy="register-password"
           class="form-control"
           [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
         />
@@ -70,7 +77,7 @@
         }
       </div>
       <div class="text-center">
-        <button class="btn btn-primary mr-1">Register</button>
+        <button class="btn btn-primary mr-1" type="submit" [disabled]="loading" data-cy="register-submit">Register</button>
         <button class="btn btn-secondary" type="reset" (click)="onReset()">
           Cancel
         </button>
