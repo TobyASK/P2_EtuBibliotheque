@@ -1,7 +1,6 @@
 package com.openclassrooms.etudiant.service;
 
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -14,7 +13,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 /**
- * Délivre et vérifie les tokens JWT (signature HMAC-SHA256).
+ * Délivre et lit les tokens JWT (signature HMAC-SHA256).
  */
 @Service
 public class JwtService {
@@ -43,23 +42,15 @@ public class JwtService {
      */
     public String extractUsername(String token) {
         try {
-            return parseClaims(token).getSubject();
+            return Jwts.parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return username != null && username.equals(userDetails.getUsername());
-    }
-
-    private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
     }
 
 }

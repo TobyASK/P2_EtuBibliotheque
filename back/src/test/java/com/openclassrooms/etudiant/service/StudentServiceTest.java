@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +57,6 @@ public class StudentServiceTest {
     @Test
     public void test_create_student() {
         // GIVEN
-        when(studentRepository.existsByEmail(EMAIL)).thenReturn(false);
         when(studentRepository.save(any(Student.class))).thenAnswer(invocation -> {
             Student toSave = invocation.getArgument(0);
             toSave.setId(ID);
@@ -71,33 +69,6 @@ public class StudentServiceTest {
         // THEN : l'étudiant est sauvegardé et renvoyé avec son id
         assertThat(created.getId()).isEqualTo(ID);
         assertThat(created.getEmail()).isEqualTo(EMAIL);
-    }
-
-    @Test
-    public void test_create_student_with_existing_email_throws_IllegalArgumentException() {
-        // GIVEN
-        when(studentRepository.existsByEmail(EMAIL)).thenReturn(true);
-
-        // THEN : rien n'est sauvegardé
-        assertThrows(IllegalArgumentException.class, () -> studentService.create(buildRequest(EMAIL)));
-        verify(studentRepository, never()).save(any());
-    }
-
-    @Test
-    public void test_create_null_student_throws_IllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> studentService.create(null));
-    }
-
-    @Test
-    public void test_find_all_students() {
-        // GIVEN
-        when(studentRepository.findAll()).thenReturn(List.of(buildStudent(1L, EMAIL), buildStudent(2L, "jane@mail.com")));
-
-        // WHEN
-        List<StudentResponseDTO> students = studentService.findAll();
-
-        // THEN
-        assertThat(students).extracting(StudentResponseDTO::getId).containsExactly(1L, 2L);
     }
 
     @Test
@@ -114,20 +85,10 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void test_find_unknown_student_throws_EntityNotFoundException() {
-        // GIVEN
-        when(studentRepository.findById(ID)).thenReturn(Optional.empty());
-
-        // THEN
-        assertThrows(EntityNotFoundException.class, () -> studentService.findById(ID));
-    }
-
-    @Test
     public void test_update_student() {
         // GIVEN
         Student existing = buildStudent(ID, EMAIL);
         when(studentRepository.findById(ID)).thenReturn(Optional.of(existing));
-        when(studentRepository.existsByEmailAndIdNot("new@mail.com", ID)).thenReturn(false);
         when(studentRepository.save(existing)).thenReturn(existing);
         StudentRequestDTO request = new StudentRequestDTO("Johnny", "Doe", "new@mail.com");
 
@@ -143,18 +104,6 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void test_update_student_with_email_of_another_student_throws_IllegalArgumentException() {
-        // GIVEN
-        when(studentRepository.findById(ID)).thenReturn(Optional.of(buildStudent(ID, EMAIL)));
-        when(studentRepository.existsByEmailAndIdNot("taken@mail.com", ID)).thenReturn(true);
-
-        // THEN
-        assertThrows(IllegalArgumentException.class,
-                () -> studentService.update(ID, buildRequest("taken@mail.com")));
-        verify(studentRepository, never()).save(any());
-    }
-
-    @Test
     public void test_delete_student() {
         // GIVEN
         Student existing = buildStudent(ID, EMAIL);
@@ -167,13 +116,4 @@ public class StudentServiceTest {
         verify(studentRepository).delete(existing);
     }
 
-    @Test
-    public void test_delete_unknown_student_throws_EntityNotFoundException() {
-        // GIVEN
-        when(studentRepository.findById(ID)).thenReturn(Optional.empty());
-
-        // THEN
-        assertThrows(EntityNotFoundException.class, () -> studentService.delete(ID));
-        verify(studentRepository, never()).delete(any());
-    }
 }

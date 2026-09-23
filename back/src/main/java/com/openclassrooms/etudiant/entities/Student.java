@@ -9,10 +9,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 /**
  * Étudiant abonné à la bibliothèque.
@@ -34,14 +30,6 @@ public class Student {
     @Column(name = "lastName", nullable = false)
     private String lastName;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
-
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime created_at;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updated_at;
 }

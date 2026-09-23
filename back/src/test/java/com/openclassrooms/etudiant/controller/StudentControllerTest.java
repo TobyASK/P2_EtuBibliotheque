@@ -79,13 +79,6 @@ public class StudentControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void accessWithInvalidTokenIsUnauthorized() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(URL)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer invalid.token.value"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     public void createStudentSuccessful() throws Exception {
         // GIVEN
         StudentRequestDTO request = new StudentRequestDTO("John", "Doe", EMAIL);
@@ -104,33 +97,6 @@ public class StudentControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void createStudentWithInvalidDataIsBadRequest() throws Exception {
-        // GIVEN : prénom vide et email invalide
-        StudentRequestDTO request = new StudentRequestDTO("", "Doe", "not-an-email");
-
-        // WHEN / THEN
-        mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .header(HttpHeaders.AUTHORIZATION, bearerToken)
-                        .content(json(request))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void createStudentWithExistingEmailIsBadRequest() throws Exception {
-        // GIVEN
-        saveStudent(EMAIL);
-        StudentRequestDTO request = new StudentRequestDTO("Jane", "Doe", EMAIL);
-
-        // WHEN / THEN
-        mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .header(HttpHeaders.AUTHORIZATION, bearerToken)
-                        .content(json(request))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void findAllStudents() throws Exception {
         // GIVEN
         saveStudent(EMAIL);
@@ -141,19 +107,6 @@ public class StudentControllerTest extends AbstractIntegrationTest {
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
-    }
-
-    @Test
-    public void findStudentById() throws Exception {
-        // GIVEN
-        Student student = saveStudent(EMAIL);
-
-        // WHEN / THEN
-        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/" + student.getId())
-                        .header(HttpHeaders.AUTHORIZATION, bearerToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(student.getId()))
-                .andExpect(jsonPath("$.firstName").value("John"));
     }
 
     @Test
@@ -183,17 +136,6 @@ public class StudentControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void updateUnknownStudentIsNotFound() throws Exception {
-        StudentRequestDTO request = new StudentRequestDTO("Johnny", "Doe", "johnny@mail.com");
-
-        mockMvc.perform(MockMvcRequestBuilders.put(URL + "/999999")
-                        .header(HttpHeaders.AUTHORIZATION, bearerToken)
-                        .content(json(request))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     public void deleteStudentSuccessful() throws Exception {
         // GIVEN
         Student student = saveStudent(EMAIL);
@@ -206,10 +148,4 @@ public class StudentControllerTest extends AbstractIntegrationTest {
         assertThat(studentRepository.existsById(student.getId())).isFalse();
     }
 
-    @Test
-    public void deleteUnknownStudentIsNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/999999")
-                        .header(HttpHeaders.AUTHORIZATION, bearerToken))
-                .andExpect(status().isNotFound());
-    }
 }

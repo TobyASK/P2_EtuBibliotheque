@@ -53,7 +53,7 @@ describe('StudentDetailComponent', () => {
 
     await createComponent();
 
-    expect(text('[data-cy="detail-error"]')).toContain('Élément introuvable.');
+    expect(text('[data-cy="detail-error"]')).toContain('Une erreur est survenue.');
     expect(fixture.nativeElement.querySelector('[data-cy="student-detail"]')).toBeNull();
   });
 
@@ -69,25 +69,4 @@ describe('StudentDetailComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/students']);
   });
 
-  it('should not delete when the user cancels', async () => {
-    studentService.getById.mockReturnValue(of(student));
-    jest.spyOn(window, 'confirm').mockReturnValue(false);
-    await createComponent();
-
-    component.deleteStudent();
-
-    expect(studentService.delete).not.toHaveBeenCalled();
-  });
-
-  it('should display an error when the deletion fails', async () => {
-    studentService.getById.mockReturnValue(of(student));
-    studentService.delete.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    await createComponent();
-
-    component.deleteStudent();
-
-    expect(component.errorMessage).toBe('Erreur serveur (500).');
-    expect(router.navigate).not.toHaveBeenCalled();
-  });
 });

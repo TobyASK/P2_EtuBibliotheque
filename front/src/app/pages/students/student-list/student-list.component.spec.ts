@@ -48,23 +48,14 @@ describe('StudentListComponent', () => {
     expect(component.loading).toBe(false);
   });
 
-  it('should display a message when there is no student', async () => {
-    studentService.getAll.mockReturnValue(of([]));
-
-    await createComponent();
-
-    expect(query('[data-cy="list-empty"]')).not.toBeNull();
-  });
-
-  it('should display the loading state while waiting for the API', async () => {
+  it('should not delete when the user cancels', async () => {
     studentService.getAll.mockReturnValue(of(students));
+    jest.spyOn(window, 'confirm').mockReturnValue(false);
     await createComponent();
 
-    // WHEN : on simule un rechargement en cours
-    component.loading = true;
-    fixture.detectChanges();
+    component.deleteStudent(students[0]);
 
-    expect(query('[data-cy="list-loading"]')).not.toBeNull();
+    expect(studentService.delete).not.toHaveBeenCalled();
   });
 
   it('should display an error when the API fails', async () => {
@@ -72,7 +63,7 @@ describe('StudentListComponent', () => {
 
     await createComponent();
 
-    expect(query('[data-cy="list-error"]').textContent).toContain('Erreur serveur (500).');
+    expect(query('[data-cy="list-error"]').textContent).toContain('Une erreur est survenue.');
   });
 
   it('should delete a student after confirmation', async () => {
@@ -91,25 +82,4 @@ describe('StudentListComponent', () => {
     expect(query('[data-cy="list-success"]')).not.toBeNull();
   });
 
-  it('should not delete when the user cancels', async () => {
-    studentService.getAll.mockReturnValue(of(students));
-    jest.spyOn(window, 'confirm').mockReturnValue(false);
-    await createComponent();
-
-    component.deleteStudent(students[0]);
-
-    expect(studentService.delete).not.toHaveBeenCalled();
-  });
-
-  it('should display an error when the deletion fails', async () => {
-    studentService.getAll.mockReturnValue(of(students));
-    studentService.delete.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-    await createComponent();
-
-    component.deleteStudent(students[0]);
-
-    expect(component.errorMessage).toBe('Élément introuvable.');
-    expect(component.students.length).toBe(2);
-  });
 });

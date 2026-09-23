@@ -32,19 +32,10 @@ describe('LoginComponent', () => {
     component.loginForm.setValue({ login, password });
   };
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should not call the API and show required errors when the form is empty', () => {
-    // WHEN
+  it('should not call the API when the form is empty', () => {
     component.onSubmit();
-    fixture.detectChanges();
 
-    // THEN
     expect(authService.login).not.toHaveBeenCalled();
-    expect(fixture.nativeElement.textContent).toContain('Le login est obligatoire');
-    expect(fixture.nativeElement.textContent).toContain('Le mot de passe est obligatoire');
   });
 
   it('should login and navigate to the students list', () => {

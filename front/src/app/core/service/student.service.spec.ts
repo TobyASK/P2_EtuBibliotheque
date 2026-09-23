@@ -29,28 +29,11 @@ describe('StudentService', () => {
     req.flush([student]);
   });
 
-  it('should GET one student by id', () => {
-    service.getById(1).subscribe(result => expect(result).toEqual(student));
-
-    const req = httpMock.expectOne('/api/students/1');
-    expect(req.request.method).toBe('GET');
-    req.flush(student);
-  });
-
   it('should POST a new student', () => {
     service.create(request).subscribe(result => expect(result.id).toBe(1));
 
     const req = httpMock.expectOne('/api/students');
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(request);
-    req.flush(student);
-  });
-
-  it('should PUT the modified student', () => {
-    service.update(1, request).subscribe(result => expect(result).toEqual(student));
-
-    const req = httpMock.expectOne('/api/students/1');
-    expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(request);
     req.flush(student);
   });

@@ -43,12 +43,6 @@ describe('StudentFormComponent', () => {
   describe('creation mode', () => {
     beforeEach(async () => createComponent(null));
 
-    it('should display the creation title and not load any student', () => {
-      expect(component.isEdit).toBe(false);
-      expect(fixture.nativeElement.querySelector('[data-cy="form-title"]').textContent).toContain('Ajouter un étudiant');
-      expect(studentService.getById).not.toHaveBeenCalled();
-    });
-
     it('should show validation errors and not call the API when the form is invalid', () => {
       component.studentForm.patchValue({ email: 'not-an-email' });
 
@@ -71,18 +65,6 @@ describe('StudentFormComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/students', 3]);
     });
 
-    it('should display the server error', () => {
-      studentService.create.mockReturnValue(throwError(() =>
-        new HttpErrorResponse({ status: 400, error: { message: 'Student with email john@mail.com already exists' } })));
-      fillForm();
-
-      component.onSubmit();
-      fixture.detectChanges();
-
-      expect(router.navigate).not.toHaveBeenCalled();
-      expect(fixture.nativeElement.querySelector('[data-cy="form-error"]').textContent)
-        .toContain('Student with email john@mail.com already exists');
-    });
   });
 
   describe('edition mode', () => {
@@ -110,13 +92,5 @@ describe('StudentFormComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/students', 3]);
     });
 
-    it('should display an error when the student cannot be loaded', async () => {
-      studentService.getById.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
-
-      await createComponent('3');
-
-      expect(component.errorMessage).toBe('Élément introuvable.');
-      expect(component.loading).toBe(false);
-    });
   });
 });

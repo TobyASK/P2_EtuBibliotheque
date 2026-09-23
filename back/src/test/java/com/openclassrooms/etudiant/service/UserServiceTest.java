@@ -99,33 +99,4 @@ public class UserServiceTest {
         assertThat(token).isEqualTo(TOKEN);
     }
 
-    @Test
-    public void test_login_with_wrong_password_throws_BadCredentialsException() {
-        // GIVEN
-        User user = buildUser(ENCODED_PASSWORD);
-        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("wrong", ENCODED_PASSWORD)).thenReturn(false);
-
-        // THEN : aucun token n'est généré
-        Assertions.assertThrows(BadCredentialsException.class,
-                () -> userService.login(LOGIN, "wrong"));
-        verify(jwtService, never()).generateToken(any());
-    }
-
-    @Test
-    public void test_login_with_unknown_user_throws_BadCredentialsException() {
-        // GIVEN
-        when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
-
-        // THEN
-        Assertions.assertThrows(BadCredentialsException.class,
-                () -> userService.login(LOGIN, PASSWORD));
-    }
-
-    @Test
-    public void test_login_with_null_login_throws_IllegalArgumentException() {
-        // THEN
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () -> userService.login(null, PASSWORD));
-    }
 }

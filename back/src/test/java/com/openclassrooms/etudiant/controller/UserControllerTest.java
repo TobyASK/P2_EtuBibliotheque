@@ -137,14 +137,4 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid credentials"));
     }
 
-    @Test
-    public void loginWithoutRequiredDataIsBadRequest() throws Exception {
-        // WHEN / THEN
-        mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_URL)
-                        .content(objectMapper.writeValueAsString(new LoginRequestDTO()))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
 }

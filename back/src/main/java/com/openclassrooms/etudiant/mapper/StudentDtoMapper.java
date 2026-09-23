@@ -14,19 +14,13 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface StudentDtoMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
-    @Mapping(target = "updated_at", ignore = true)
     Student toEntity(StudentRequestDTO studentRequestDTO);
 
     StudentResponseDTO toDto(Student student);
 
     List<StudentResponseDTO> toDtoList(List<Student> students);
 
-    /**
-     * Copie les champs modifiables du DTO dans une entité existante.
-     */
+    /** Copie les champs du DTO dans un étudiant existant. */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
-    @Mapping(target = "updated_at", ignore = true)
     void updateEntity(StudentRequestDTO studentRequestDTO, @MappingTarget Student student);
 }

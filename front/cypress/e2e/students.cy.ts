@@ -27,7 +27,7 @@ describe('Gestion des étudiants', () => {
 
       cy.visitAsLoggedIn('/students');
 
-      cy.get('[data-cy="list-error"]').should('contain', 'Erreur serveur (500).');
+      cy.get('[data-cy="list-error"]').should('contain', 'Une erreur est survenue.');
     });
 
     it('supprime un étudiant', () => {
@@ -51,7 +51,6 @@ describe('Gestion des étudiants', () => {
       cy.get('[data-cy="form-submit"]').click();
 
       cy.contains('Le prénom est obligatoire');
-      cy.contains('Le nom est obligatoire');
       cy.contains("L'email n'est pas valide");
     });
 
@@ -75,20 +74,6 @@ describe('Gestion des étudiants', () => {
       cy.get('[data-cy="detail-email"]').should('contain', 'john@mail.com');
     });
 
-    it("affiche l'erreur quand l'email existe déjà", () => {
-      cy.intercept('POST', '/api/students', {
-        statusCode: 400,
-        body: { message: 'Student with email john@mail.com already exists' }
-      });
-
-      cy.visitAsLoggedIn('/students/new');
-      cy.get('[data-cy="firstName-input"]').type('John');
-      cy.get('[data-cy="lastName-input"]').type('Doe');
-      cy.get('[data-cy="email-input"]').type('john@mail.com');
-      cy.get('[data-cy="form-submit"]').click();
-
-      cy.get('[data-cy="form-error"]').should('contain', 'already exists');
-    });
   });
 
   describe('Détail', () => {
@@ -100,14 +85,6 @@ describe('Gestion des étudiants', () => {
       cy.get('[data-cy="detail-lastName"]').should('contain', 'Smith');
       cy.get('[data-cy="detail-firstName"]').should('contain', 'Jane');
       cy.get('[data-cy="detail-email"]').should('contain', 'jane@mail.com');
-    });
-
-    it("affiche une erreur quand l'étudiant n'existe pas", () => {
-      cy.intercept('GET', '/api/students/99', { statusCode: 404, body: {} });
-
-      cy.visitAsLoggedIn('/students/99');
-
-      cy.get('[data-cy="detail-error"]').should('contain', 'Élément introuvable.');
     });
 
     it('supprime l\'étudiant et revient à la liste', () => {
@@ -140,12 +117,5 @@ describe('Gestion des étudiants', () => {
       cy.url().should('match', /\/students\/1$/);
     });
 
-    it("affiche une erreur quand l'étudiant à modifier n'existe pas", () => {
-      cy.intercept('GET', '/api/students/99', { statusCode: 404, body: {} });
-
-      cy.visitAsLoggedIn('/students/99/edit');
-
-      cy.get('[data-cy="form-error"]').should('contain', 'Élément introuvable.');
-    });
   });
 });

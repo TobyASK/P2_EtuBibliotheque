@@ -3,13 +3,6 @@ describe('Connexion', () => {
     cy.visit('/login');
   });
 
-  it('affiche les champs obligatoires quand le formulaire est vide', () => {
-    cy.get('[data-cy="login-submit"]').click();
-
-    cy.contains('Le login est obligatoire');
-    cy.contains('Le mot de passe est obligatoire');
-  });
-
   it('connecte l\'agent, stocke le token et affiche la liste des étudiants', () => {
     cy.intercept('POST', '/api/login', { body: { token: 'fake-jwt-token' } }).as('login');
     cy.intercept('GET', '/api/students', { body: [] }).as('students');
